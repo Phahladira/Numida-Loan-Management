@@ -7,6 +7,7 @@ import useFetch from "../hooks/useFetch";
 import { VITE_API_URL } from "../util/constants";
 import LoadingIndicator from "./LoadingIndicator";
 import { validatePaymentId, validatePaymentAmount } from "../util/helpers";
+import { Button } from "./button";
 
 const METHOD = "POST";
 const BASE_URL = import.meta.env.VITE_API_URL || VITE_API_URL;
@@ -116,20 +117,21 @@ export const AddNewPaymentForm: React.FC<AddNewPaymentFormProps> = ({
       {apiError && <p className="error-message">{apiError}</p>}
 
       <div className="button-container">
-        <button
-          className={loading ? "disabled-btn" : "outline-btn"}
-          onClick={onClose}
+        <Button
+          isFlex
+          isPrimary={false}
           disabled={loading}
-          style={{ flex: 1 }}>
-          close
-        </button>
-        <button
-          className={loading ? "disabled-btn" : "primary-btn"}
+          onSubmit={onClose}
+          content="Close"
+        />
+
+        <Button
+          isFlex
+          isPrimary
           type="submit"
           disabled={loading}
-          style={{ flex: 1 }}>
-          Submit
-        </button>
+          content="Confirm"
+        />
       </div>
     </form>
   );

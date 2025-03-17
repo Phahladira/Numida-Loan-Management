@@ -43,6 +43,7 @@
 
 .primary-btn:hover {
   background-color: #0F424D;
+  border: 1px solid #0F424D;
 }
 
 .outline-btn {
@@ -68,6 +69,7 @@
 
 .outline-btn:hover {
   background-color: #0F424D;
+  border: 1px solid #0F424D;
   color: white;
 }
 
@@ -89,6 +91,10 @@
   justify-content: center;
   height: 50px;
   font-weight: 600;
+}
+
+.flex {
+  flex: 1;
 }
 
 .disabled-btn:hover {

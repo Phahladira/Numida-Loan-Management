@@ -8,6 +8,14 @@ import { GET_LOANS } from "../util/graphql_constants";
 import { ExistingLoans } from "../__generated__/graphql";
 import { validateLoan } from "../util/helpers";
 
+/*
+  NB: Made this a react.memo to avoid
+  uneccessary rerenders when the modal state
+  changes as a result of usage.
+  This is in consideration with the fact that
+  The loans component could grow to be large, 
+  given it's data.
+*/
 const Loans: React.FC = memo(() => {
   const { loading, error, data } = useQuery<{ loans: ExistingLoans[] }>(
     GET_LOANS

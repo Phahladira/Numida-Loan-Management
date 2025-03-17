@@ -100,9 +100,12 @@ const AccordionPaymentItem: React.FC<PaymentProps> = ({ payment }) => {
         <img src="currency.svg" alt="currency" className="currency-icon" />
         <p className="title">Payment ID: #{id}</p>
       </div>
-      <p className="date-subtitle">
-        Date Paid: {formatDate(paymentDate.toDateString())}
-      </p>
+      {!isNaN(paymentDate.getTime()) && (
+        <p className="date-subtitle">
+          Date Paid: {formatDate(paymentDate.toDateString())}
+        </p>
+      )}
+
       <div
         className="loan-category"
         style={{ backgroundColor: getLoanColor(status) }}>

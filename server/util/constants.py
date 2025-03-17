@@ -37,4 +37,7 @@ loan_payments: List[LoanPayment] = [
     {"id": 1, "loan_id": 1, "amount": 0, "payment_date": datetime.date(2024, 3, 4)},
     {"id": 2, "loan_id": 2, "amount": 0, "payment_date": datetime.date(2024, 3, 15)},
     {"id": 3, "loan_id": 3, "amount": 0, "payment_date": datetime.date(2024, 4, 5)},
+    {"id": 4, "loan_id": 3, "amount": 0},
+    {"id": 5, "loan_id": 1, "amount": 2000, "payment_date": datetime.date(2025, 3, 10)},
+    {"id": 6, "loan_id": 2, "amount": 3000, "payment_date": datetime.date(2025, 4, 5)},
 ]

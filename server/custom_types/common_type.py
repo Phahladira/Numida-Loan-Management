@@ -15,7 +15,8 @@ class LoanPayment(TypedDict):
     amount: Union[int, float]
     payment_date: datetime.date
 
-
+# This ENUM is used to create a general class for 
+# messages for the REST endpoints. 
 class PaymentStatus(Enum):
     SUCCESS = ("The operation was successful",)
     FAILURE = ("The operation failed due to an error",)

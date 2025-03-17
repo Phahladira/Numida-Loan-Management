@@ -15,7 +15,7 @@ while (noSuccess) {
 }
 ```
 
-## What are we testing for in this assessment?
+## What are we testing for in this assessment? ✅
 
 - Your skill as a frontend & backend developer.
 - Your ability to structure your code.

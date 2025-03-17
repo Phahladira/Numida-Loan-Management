@@ -2,6 +2,10 @@ import datetime
 from typing import List
 from custom_types.common_type import Loan, LoanPayment
 
+# This file contains the 'Local Database' but
+# can also be used to store constant variables
+# and values. We've also typed the data
+
 loans: List[Loan] = [
     {
         "id": 1,

@@ -12,7 +12,7 @@ import { Button } from "./button";
 const METHOD = "POST";
 const BASE_URL = import.meta.env.VITE_API_URL || VITE_API_URL;
 
-type AddNewPaymentFormProps = {
+type AddPaymentModalProps = {
   onClose: () => void;
 };
 
@@ -21,7 +21,7 @@ type NewPaymentProps = {
   paymentAmount: string;
 };
 
-export const AddNewPaymentForm: React.FC<AddNewPaymentFormProps> = ({
+export const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
   onClose,
 }) => {
   const { loading, error: apiError, fetchData } = useFetch();

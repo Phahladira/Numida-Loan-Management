@@ -1,7 +1,10 @@
 from typing import Union
 from dataclasses import dataclass
 
-
+# This DTO was created for the values
+# coming through from the frontend to ensure 
+# that the data adheres to the format needed.
+# This enhances the robustness of our Backend
 @dataclass
 class LoanPaymentsDTO:
     loan_id: int

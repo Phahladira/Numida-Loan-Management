@@ -105,7 +105,6 @@ const AccordionPaymentItem: React.FC<PaymentProps> = ({ payment }) => {
           Date Paid: {formatDate(paymentDate.toDateString())}
         </p>
       )}
-
       <div
         className="loan-category"
         style={{ backgroundColor: getLoanColor(status) }}>

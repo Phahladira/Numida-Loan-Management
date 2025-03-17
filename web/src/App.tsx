@@ -3,7 +3,7 @@ import { useState, useCallback } from "react";
 import "./App.css";
 import Loans from "./components/Loans";
 import { Nav } from "./components/Nav";
-import { AddNewPaymentForm } from "./components/AddPaymentForm";
+import { AddPaymentModal } from "./components/AddPaymentForm";
 
 function App() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -42,7 +42,7 @@ function App() {
       {isDialogOpen && (
         <div className="dialog-backdrop" onClick={handleCloseDialog}>
           <div onClick={(e) => e.stopPropagation()}>
-            <AddNewPaymentForm onClose={handleCloseDialog} />
+            <AddPaymentModal onClose={handleCloseDialog} />
           </div>
         </div>
       )}

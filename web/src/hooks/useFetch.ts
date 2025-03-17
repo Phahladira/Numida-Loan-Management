@@ -12,6 +12,13 @@ type UseFetchResult = {
   fetchData: (url: string, options: FetchOptions) => Promise<any>;
 };
 
+/*
+  This hook is meant to be reused when
+  in need of using the fetch operation in 
+  a reusable manner. This encompases the 
+  loading, error and data states
+*/
+
 const useFetch = (): UseFetchResult => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");

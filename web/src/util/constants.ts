@@ -2,6 +2,8 @@
     This is a fallback of the URL 
     that's supposed to be in the .env file 
 */
+export const PULL_LESS_INFO=true
+
 export const VITE_API_URL="http://127.0.0.1:2024"
 
 export const DATE_REGEX = /^(?:(?:\d{4}[-\/.]\d{2}[-\/.]\d{2})|(?:\d{2}[-\/.]\d{2}[-\/.]\d{4})|(?:\d{2}[-\/.]\d{2}[-\/.]\d{4})|(?:\d{4}[-\/.]\d{2}[-\/.]\d{2}))$/;

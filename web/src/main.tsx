@@ -4,19 +4,21 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
 import "./index.css";
 import App from "./App.tsx";
-import { VITE_API_URL } from "./util/constants.ts";
+import { AuthProvider } from "./context/AuthContext.tsx";
+import { authLink, httpLink } from "./authorizer/apollo_link_authorizer.ts";
 
-const BASE_URL = import.meta.env.VITE_API_URL || VITE_API_URL;
-
+// Create the Apollo Client instance
 const client = new ApolloClient({
-  uri: `${BASE_URL}/graphql`,
+  link: authLink.concat(httpLink), // Chain the auth link with the HTTP link
   cache: new InMemoryCache(),
 });
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ApolloProvider client={client}>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </ApolloProvider>
   </StrictMode>
 );

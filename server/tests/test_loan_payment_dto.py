@@ -1,4 +1,3 @@
-import pytest
 from dtos.loan_payment_dto import LoanPaymentsDTO  # Replace `your_module` with the actual module name
 
 # Test valid inputs

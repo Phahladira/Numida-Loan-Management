@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from "react";
 
-import "../styles/AddPaymentForm.css";
+import "../styles/Modal.css";
 import { FormFieldProps } from "../util/types";
 
 const FormField: React.FC<FormFieldProps> = ({

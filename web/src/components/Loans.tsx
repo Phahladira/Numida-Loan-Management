@@ -1,12 +1,16 @@
 import { memo } from "react";
 import { useQuery } from "@apollo/client";
 
+import {
+  GET_LOANS,
+  GET_LOANS_WITHOUT_REPAYMENTS,
+} from "../util/graphql_constants";
 import "../styles/Loans.css";
 import Accordion from "./Accordion";
 import LoadingIndicator from "./LoadingIndicator";
-import { GET_LOANS } from "../util/graphql_constants";
 import { ExistingLoans } from "../__generated__/graphql";
 import { validateLoan } from "../util/helpers";
+import { PULL_LESS_INFO } from "../util/constants";
 
 /*
   NB: Made this a react.memo to avoid
@@ -18,7 +22,7 @@ import { validateLoan } from "../util/helpers";
 */
 const Loans: React.FC = memo(() => {
   const { loading, error, data } = useQuery<{ loans: ExistingLoans[] }>(
-    GET_LOANS
+    PULL_LESS_INFO ? GET_LOANS_WITHOUT_REPAYMENTS : GET_LOANS
   );
 
   if (loading) {
@@ -41,7 +45,7 @@ const Loans: React.FC = memo(() => {
         />
         <div>
           <h2>Error: An unexpected error occurred</h2>
-          <p>{error.message}</p>
+          <p className="error-message">{error.message}</p>
         </div>
       </div>
     );

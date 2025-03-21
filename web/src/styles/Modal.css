@@ -57,3 +57,32 @@
     font-weight: bold;
     margin: 0rem auto;
 }
+
+.header-title-2 {
+    padding: 0;
+    font-size: 35px;
+    font-weight: bold;
+    margin: 0rem auto;
+}
+
+.title-container {
+    gap: 1rem;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.logo {
+    width: 250px;
+    padding: 0.5em;
+    will-change: filter;
+    transition: filter 300ms;
+}
+
+.logo:hover {
+    filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+    filter: drop-shadow(0 0 2em #61dafbaa);
+}

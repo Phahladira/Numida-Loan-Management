@@ -1,10 +1,14 @@
+import bcrypt
 import datetime
 from typing import List
-from custom_types.common_type import Loan, LoanPayment
+from custom_types.common_type import Loan, LoanPayment, User
 
 # This file contains the 'Local Database' but
 # can also be used to store constant variables
 # and values. We've also typed the data
+IS_PROD=False
+SERIALIZE_KEY=bcrypt.hashpw(b'itsAs3cr34tkeyforJWT', bcrypt.gensalt())
+JWT_SECRETKEY=bcrypt.hashpw(b'itsAs3cr34tkeyforJWT', bcrypt.gensalt())
 
 loans: List[Loan] = [
     {
@@ -45,3 +49,5 @@ loan_payments: List[LoanPayment] = [
     {"id": 5, "loan_id": 1, "amount": 2000, "payment_date": datetime.date(2025, 3, 10)},
     {"id": 6, "loan_id": 2, "amount": 3000, "payment_date": datetime.date(2025, 4, 5)},
 ]
+
+users: List[User] = []

@@ -15,9 +15,16 @@ class LoanPayment(TypedDict):
     amount: Union[int, float]
     payment_date: datetime.date
 
+class User(TypedDict):
+    id: str
+    username: str
+    password: str
+    created_at: datetime.date
+
+
 # This ENUM is used to create a general class for 
 # messages for the REST endpoints. 
-class PaymentStatus(Enum):
+class OperationStatus(Enum):
     SUCCESS = ("The operation was successful",)
     FAILURE = ("The operation failed due to an error",)
     PENDING = ("The operation is still in progress",)

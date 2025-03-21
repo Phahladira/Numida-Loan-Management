@@ -1,13 +1,13 @@
 import { useState, useCallback } from "react";
 
 import "../App.css";
-import FormField from "./FormField";
-import "../styles/AddPaymentForm.css";
+import "../styles/Modal.css";
+import FormField from "../components/FormField";
 import useFetch from "../hooks/useFetch";
 import { VITE_API_URL } from "../util/constants";
-import LoadingIndicator from "./LoadingIndicator";
+import LoadingIndicator from "../components/LoadingIndicator";
 import { validatePaymentId, validatePaymentAmount } from "../util/helpers";
-import { Button } from "./button";
+import { Button } from "../components/Button";
 
 const METHOD = "POST";
 const BASE_URL = import.meta.env.VITE_API_URL || VITE_API_URL;
@@ -67,7 +67,7 @@ export const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
         },
       };
 
-      await fetchData(`${BASE_URL}/v1/payments`, options);
+      await fetchData(`${BASE_URL}/api/v1/payments`, options);
 
       setFormData({
         loanId: "",

@@ -1,25 +1,24 @@
-import pytest
-from custom_types.common_type import PaymentStatus
+from custom_types.common_type import OperationStatus
 
-# Tests for PaymentStatus Enum
+# Tests for OperationStatus Enum
 def test_payment_status_values():
-    """Test PaymentStatus enum values"""
-    assert PaymentStatus.SUCCESS.name == "SUCCESS"
-    assert PaymentStatus.FAILURE.name == "FAILURE"
-    assert PaymentStatus.PENDING.name == "PENDING"
+    """Test OperationStatus enum values"""
+    assert OperationStatus.SUCCESS.name == "SUCCESS"
+    assert OperationStatus.FAILURE.name == "FAILURE"
+    assert OperationStatus.PENDING.name == "PENDING"
 
 def test_payment_status_string_representation():
-    """Test string representation of PaymentStatus"""
-    assert str(PaymentStatus.SUCCESS) == "The operation was successful"
-    assert str(PaymentStatus.FAILURE) == "The operation failed due to an error"
-    assert str(PaymentStatus.PENDING) == "The operation is still in progress"
+    """Test string representation of OperationStatus"""
+    assert str(OperationStatus.SUCCESS) == "The operation was successful"
+    assert str(OperationStatus.FAILURE) == "The operation failed due to an error"
+    assert str(OperationStatus.PENDING) == "The operation is still in progress"
 
 def test_payment_status_with_details():
-    """Test with_details method of PaymentStatus"""
+    """Test with_details method of OperationStatus"""
     # With details
-    assert PaymentStatus.SUCCESS.with_details("Payment received") == "The operation was successful: Payment received"
-    assert PaymentStatus.FAILURE.with_details("Insufficient funds") == "The operation failed due to an error: Insufficient funds"
+    assert OperationStatus.SUCCESS.with_details("Payment received") == "The operation was successful: Payment received"
+    assert OperationStatus.FAILURE.with_details("Insufficient funds") == "The operation failed due to an error: Insufficient funds"
     
     # Without details
-    assert PaymentStatus.PENDING.with_details() == "The operation is still in progress"
-    assert PaymentStatus.SUCCESS.with_details("") == "The operation was successful"
+    assert OperationStatus.PENDING.with_details() == "The operation is still in progress"
+    assert OperationStatus.SUCCESS.with_details("") == "The operation was successful"

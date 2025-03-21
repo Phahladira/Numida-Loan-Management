@@ -118,6 +118,58 @@ export function formatDate(dateStr: string): string {
     return `${day} ${month} ${year}`;
 }
 
+export function validateName(name: string): string | undefined {
+    // Regex pattern for username validation
+    if (name === "") return undefined
+    if (name === "") return 
+
+    if (name.length < 3) return "Username needs to be at least 3 chars long"
+
+    if (name.length > 20) return "Username needs to be at most 20 chars long"
+
+    return undefined
+}
+
+export function validateUsername(username: string): string | undefined {
+    // Regex pattern for username validation
+    const pattern = /^[a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*$/;
+
+    if (username === "") return
+
+    if (!pattern.test(username)) return "Username is invalid"
+
+    if (username.length < 3) return "Username needs to be at least 3 chars long"
+
+    if (username.length > 20) return "Username needs to be at most 20 chars long"
+
+    return undefined
+}
+
+export function validatePassword(password: string): string | undefined {
+    // Regex pattern to check if the password has exactly 6 characters
+    const pattern = /^.{6}$/;
+    // Check if the password matches the pattern
+    if (!pattern.test(password)) return "Passwird must be at least 6 chars long"
+
+    return undefined
+}
+
+function getCookie(name: string) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop()!.split(';').shift();
+}
+
+export function getTokens() {
+    const xAuthToken = getCookie('x-auth-token');
+    const xCsrfToken = getCookie('x-csrf-token');
+
+    return {
+        'x-auth-token': xAuthToken,
+        'x-csrf-token': xCsrfToken
+    };
+}
+
 /*
     This function is used to validate the ID
     value being used to ensure it meets our criteria
@@ -149,6 +201,27 @@ export const validatePaymentAmount =  (value: string): string | undefined => {
 
     return undefined;
 }
+
+export const validateDate = (value: string): string | undefined => {
+    // Check if the date string is empty
+    if (!value) return undefined
+
+    // Parse the input date string into a Date object
+    const inputDate = new Date(value);
+
+    // Check if the parsed date is valid
+    if (isNaN(inputDate.getTime())) {
+      return "Date is invalid";
+    }
+
+    // Get the current date
+    const currentDate = new Date();
+
+    // Ensure the input date is after the current date
+    if (inputDate <= currentDate ) return "Date is invalid"
+
+    return undefined
+  };
 
 /*
     This function is used to get which category 
@@ -227,11 +300,6 @@ const isExistingLoanValid = (loan: ExistingLoans): boolean  => {
 
     if (loan.principal === undefined) {
         console.error("The loan principal is undefined");
-        return false
-    }
-
-    if (loan.repayments === undefined) {
-        console.error("The loan repayments is undefined");
         return false
     }
 

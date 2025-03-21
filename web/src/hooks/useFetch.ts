@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { getTokens } from "../util/helpers";
 
 type FetchOptions = {
   method: string;
@@ -28,7 +29,22 @@ const useFetch = (): UseFetchResult => {
     setError("");
 
     try {
-      const response = await fetch(url, options);
+      
+     // Retrieve the tokens
+      const tokens = getTokens(); // Assuming you have the `getTokens` function defined
+
+      const headers: Record<string, string> = {
+        ...options.headers,
+        'x-auth-token': tokens['x-auth-token'] || '', // Fallback to empty string if undefined
+        'x-csrf-token': tokens['x-csrf-token'] || '', // Fallback to empty string if undefined
+        mode: 'cors',
+      };
+
+      const response = await fetch(url, {
+        ...options,
+        headers,
+        credentials: "include", 
+      });
 
       if (!response.ok) {
         const result = await response.json();

@@ -46,6 +46,31 @@
   border: 1px solid #0F424D;
 }
 
+.secondary-btn {
+  border-radius: 9999px;
+  background-color: #19CEEA;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  color: white;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  font-weight: 600;
+}
+
+.secondary-btn:hover {
+  background-color: #0F424D;
+  border: 1px solid #0F424D;
+}
+
 .outline-btn {
   border-radius: 9999px;
   border: 0.5px solid black;

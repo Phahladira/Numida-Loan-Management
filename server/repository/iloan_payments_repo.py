@@ -9,5 +9,13 @@ class ILoanPaymentRepository(ABC):
         pass
 
     @abstractmethod
-    def get_payments(self) -> List[Dict]:
+    def delete_payment(self, loan_id: int) -> Dict:
+        pass
+
+    @abstractmethod
+    def get_repayments(self) -> List[Dict]:
+        pass
+
+    @abstractmethod
+    def get_repayments_by_loan_id(self, loan_id: int) -> List[Dict]:
         pass

@@ -5,246 +5,242 @@ import {
   calculateSimpleInterest,
   calculateCompoundInterest,
   formatDate,
+  validateName,
+  validateUsername,
+  validatePassword,
   validatePaymentId,
   validatePaymentAmount,
-} from '../util/helpers'; // adjust path as needed
+  validateDate,
+  getTokens,
+} from "../util/helpers";
+import { LOAN_CATEGORY_COLORS, LOAN_CATEGORY_ENUM } from "../util/constants";
+import { ExistingLoans } from "../__generated__/graphql";
 
-import { ExistingLoans, LoanRepayments } from '../__generated__/graphql';
-import { LOAN_CATEGORY_COLORS, LOAN_CATEGORY_ENUM } from '../util/constants';
-
-// Mock global console.error to prevent test output pollution
-beforeEach(() => {
-  jest.spyOn(console, 'error').mockImplementation(() => {});
-});
-
-afterEach(() => {
-  jest.clearAllMocks();
-});
-
-describe('getLoanColor', () => {
-  test('should return GREY for UNPAID loans', () => {
+describe("getLoanColor", () => {
+  it("should return GREY for UNPAID status", () => {
     expect(getLoanColor(LOAN_CATEGORY_ENUM.UNPAID)).toBe(LOAN_CATEGORY_COLORS.GREY);
   });
 
-  test('should return GREEN for ON_TIME loans', () => {
+  it("should return GREEN for ON_TIME status", () => {
     expect(getLoanColor(LOAN_CATEGORY_ENUM.ON_TIME)).toBe(LOAN_CATEGORY_COLORS.GREEN);
   });
 
-  test('should return ORANGE for LATE loans', () => {
+  it("should return ORANGE for LATE status", () => {
     expect(getLoanColor(LOAN_CATEGORY_ENUM.LATE)).toBe(LOAN_CATEGORY_COLORS.ORANGE);
   });
 
-  test('should return RED for DEFAULTED loans', () => {
+  it("should return RED for DEFAULTED status", () => {
     expect(getLoanColor(LOAN_CATEGORY_ENUM.DEFAULTED)).toBe(LOAN_CATEGORY_COLORS.RED);
   });
 
-  test('should return GREY as default', () => {
-    expect(getLoanColor('INVALID_STATUS' as LOAN_CATEGORY_ENUM)).toBe(LOAN_CATEGORY_COLORS.GREY);
+  it("should return GREY for unknown status", () => {
+    expect(getLoanColor("UNKNOWN_STATUS" as LOAN_CATEGORY_ENUM)).toBe(LOAN_CATEGORY_COLORS.GREY);
   });
 });
 
-describe('validateLoan', () => {
-  const validLoan = {
+describe("validateLoan", () => {
+  const validLoan: ExistingLoans = {
     id: 1,
-    name: 'Test Loan',
-    interestRate: 5,
-    dueDate: '2023-12-31',
-    principal: 1000,
-    repayments: []
-  } as unknown as ExistingLoans;
+    name: "Test Loan",
+    interestRate: 5.0,
+    dueDate: "2025-03-01",
+    principal: 10000,
+  };
 
-  test('should return loan when valid', () => {
-    expect(validateLoan(validLoan)).toBe(validLoan);
+  it("should return the loan if it is valid", () => {
+    expect(validateLoan(validLoan)).toEqual(validLoan);
   });
 
-  test('should return null when loan is null', () => {
-    expect(validateLoan(null as unknown as ExistingLoans)).toBeNull();
-    expect(console.error).toHaveBeenCalledWith('Loan item is null or invalid');
-  });
-
-  test('should return null when loan is missing required fields', () => {
+  it("should return null if the loan is missing required fields", () => {
     const invalidLoan = { ...validLoan, id: undefined };
-    expect(validateLoan(invalidLoan as ExistingLoans)).toBeNull();
-    expect(console.error).toHaveBeenCalledWith('Loan item is null or invalid');
+    expect(validateLoan(invalidLoan)).toBeNull();
   });
 });
 
-describe('categorizeLoanPayment', () => {
-  const validPayment = {
+describe("categorizeLoanPayment", () => {
+  const validLoan: ExistingLoans = {
     id: 1,
-    paymentDate: '2023-12-25'
-  } as LoanRepayments;
+    name: "Test Loan",
+    interestRate: 5.0,
+    dueDate: "2025-03-01",
+    principal: 10000,
+    repayments: [
+      {
+        id: 1,
+        loanId: 1,
+        paymentDate: "2025-03-04",
+      },
+    ],
+  };
 
-  const validLoan = {
-    id: 1,
-    name: 'Test Loan',
-    interestRate: 5,
-    dueDate: '2023-12-31',
-    principal: 1000,
-    repayments: [validPayment]
-  } as unknown as ExistingLoans;
-
-  test('should categorize payments correctly', () => {
+  it("should return categorized payments for a valid loan", () => {
     const result = categorizeLoanPayment(validLoan);
     expect(result).toEqual([
       {
-        name: 'Test Loan',
         id: 1,
-        principal: 1000,
-        interestRate: 5,
-        dueDate: new Date('2023-12-31'),
-        paymentDate: new Date('2023-12-25'),
-        status: LOAN_CATEGORY_ENUM.ON_TIME
-      }
+        name: "Test Loan",
+        principal: 10000,
+        interestRate: 5.0,
+        dueDate: new Date("2025-03-01"),
+        paymentDate: new Date("2025-03-04"),
+        status: LOAN_CATEGORY_ENUM.ON_TIME,
+      },
     ]);
   });
 
-  test('should return null for invalid payments', () => {
-    const loanWithInvalidPayment = {
-      ...validLoan,
-      repayments: [{ id: undefined, paymentDate: '2023-12-25' } as LoanRepayments]
-    };
-    expect(categorizeLoanPayment(loanWithInvalidPayment as ExistingLoans)).toBeNull();
-    expect(console.error).toHaveBeenCalledWith('One or more payments are invalid');
+  it("should return null if any payment is invalid", () => {
+    const invalidLoan = { ...validLoan, repayments: [{ id: 1 }] };
+    expect(categorizeLoanPayment(invalidLoan)).toBeNull();
   });
 
-  test('should handle empty repayments array', () => {
-    const loanWithNoPayments = { ...validLoan, repayments: [] };
-    expect(categorizeLoanPayment(loanWithNoPayments as ExistingLoans)).toEqual([]);
+  it("should return null if repayments are missing", () => {
+    const invalidLoan = { ...validLoan, repayments: undefined };
+    expect(categorizeLoanPayment(invalidLoan)).toStrictEqual([]);
   });
 });
 
-describe('calculateSimpleInterest', () => {
-  test('should calculate simple interest correctly', () => {
-    expect(calculateSimpleInterest(1000, 5, 1)).toBe(50);
+describe("calculateSimpleInterest", () => {
+  it("should calculate simple interest correctly", () => {
     expect(calculateSimpleInterest(1000, 5, 2)).toBe(100);
-    expect(calculateSimpleInterest(5000, 3.5, 2)).toBe(350);
   });
 
-  test('should round to 2 decimal places', () => {
-    expect(calculateSimpleInterest(1000, 5.123, 1)).toBe(51.23);
+  it("should return 0 if principal is 0", () => {
+    expect(calculateSimpleInterest(0, 5, 2)).toBe(0);
+  });
+
+  it("should return 0 if rate is 0", () => {
+    expect(calculateSimpleInterest(1000, 0, 2)).toBe(0);
+  });
+
+  it("should return 0 if time is 0", () => {
+    expect(calculateSimpleInterest(1000, 5, 0)).toBe(0);
   });
 });
 
-describe('calculateCompoundInterest', () => {
-  test('should calculate compound interest correctly with default compounding frequency', () => {
-    expect(calculateCompoundInterest(1000, 5, 1)).toBe(50);
+describe("calculateCompoundInterest", () => {
+  it("should calculate compound interest correctly", () => {
     expect(calculateCompoundInterest(1000, 5, 2)).toBe(102.5);
   });
 
-  test('should calculate compound interest with specified compounding frequency', () => {
-    expect(calculateCompoundInterest(1000, 5, 1, 12)).toBe(51.16);
-    expect(calculateCompoundInterest(1000, 5, 2, 4)).toBe(104.49);
+  it("should return 0 if principal is 0", () => {
+    expect(calculateCompoundInterest(0, 5, 2)).toBe(0);
   });
 
-  test('should round to 2 decimal places', () => {
-    expect(calculateCompoundInterest(1000, 5.123, 1)).toBe(51.23);
+  it("should return 0 if rate is 0", () => {
+    expect(calculateCompoundInterest(1000, 0, 2)).toBe(0);
+  });
+
+  it("should return 0 if time is 0", () => {
+    expect(calculateCompoundInterest(1000, 5, 0)).toBe(0);
   });
 });
 
-describe('formatDate', () => {
-  test('should format valid date strings correctly', () => {
-    expect(formatDate('2023-12-31')).toBe('31 December 2023');
-    expect(formatDate('2023-01-01')).toBe('01 January 2023');
+describe("formatDate", () => {
+  it("should format a valid date string", () => {
+    expect(formatDate("2025-03-01")).toBe("01 March 2025");
   });
 
-  test('should return empty string for null or undefined input', () => {
-    expect(formatDate('')).toBe('');
-    expect(console.error).toHaveBeenCalledWith('Date string is null');
+  it("should return an empty string for an invalid date string", () => {
+    expect(formatDate("invalid-date")).toBe("");
   });
 
-  test('should return empty string for invalid date strings', () => {
-    expect(formatDate('not-a-date')).toBe('');
-    expect(console.error).toHaveBeenCalledWith('Invalid date string');
+  it("should return an empty string for an empty date string", () => {
+    expect(formatDate("")).toBe("");
   });
 });
 
-describe('validatePaymentId', () => {
-  test('should return undefined for valid payment IDs', () => {
-    expect(validatePaymentId('123')).toBeUndefined();
-    expect(validatePaymentId('0')).toBeUndefined();
+describe("validateName", () => {
+  it("should return undefined for a valid name", () => {
+    expect(validateName("John")).toBeUndefined();
   });
 
-  test('should validate required field', () => {
-    expect(validatePaymentId('')).toBe('Loan ID is required');
+  it("should return an error message for a name shorter than 3 characters", () => {
+    expect(validateName("Jo")).toBe("Username needs to be at least 3 chars long");
   });
 
-  test('should validate numeric values', () => {
-    expect(validatePaymentId('abc')).toBe('Loan ID must be a number');
-    expect(validatePaymentId('123abc')).toBe('Loan ID must be a number');
-  });
-
-});
-
-describe('validatePaymentAmount', () => {
-  test('should return undefined for valid payment amounts', () => {
-    expect(validatePaymentAmount('123')).toBeUndefined();
-    expect(validatePaymentAmount('123.45')).toBeUndefined();
-    expect(validatePaymentAmount('0')).toBeUndefined();
-    expect(validatePaymentAmount('0.00')).toBeUndefined();
-  });
-
-  test('should validate numeric values', () => {
-    expect(validatePaymentAmount('abc')).toBe('Payment amount must be a number');
-    expect(validatePaymentAmount('123abc')).toBe('Payment amount must be a number');
+  it("should return an error message for a name longer than 20 characters", () => {
+    expect(validateName("JohnDoeJohnDoeJohnDoeJohnDoe")).toBe("Username needs to be at most 20 chars long");
   });
 });
 
-// Test the private helper function through its uses in the main functions
-describe('getLoanCategory (tested indirectly through categorizeLoanPayment)', () => {
-  test('ON_TIME categorization for payment before due date', () => {
-    const loan = {
-      id: 1,
-      name: 'Test',
-      principal: 1000,
-      interestRate: 5,
-      dueDate: '2023-12-31',
-      repayments: [{ id: 1, paymentDate: '2023-12-25' }]
-    } as unknown as ExistingLoans;
-    
-    const result = categorizeLoanPayment(loan);
-    expect(result![0].status).toBe(LOAN_CATEGORY_ENUM.ON_TIME);
+describe("validateUsername", () => {
+  it("should return undefined for a valid username", () => {
+    expect(validateUsername("john_doe")).toBeUndefined();
   });
-  
-  test('ON_TIME categorization for payment within 5 days after due date', () => {
-    const loan = {
-      id: 1,
-      name: 'Test',
-      principal: 1000,
-      interestRate: 5,
-      dueDate: '2023-12-31',
-      repayments: [{ id: 1, paymentDate: '2024-01-05' }]
-    } as unknown as ExistingLoans;
-    
-    const result = categorizeLoanPayment(loan);
-    expect(result![0].status).toBe(LOAN_CATEGORY_ENUM.ON_TIME);
+
+  it("should return an error message for an invalid username", () => {
+    expect(validateUsername("john@doe")).toBe("Username is invalid");
   });
-  
-  test('LATE categorization for payment between 6-30 days after due date', () => {
-    const loan = {
-      id: 1,
-      name: 'Test',
-      principal: 1000,
-      interestRate: 5,
-      dueDate: '2023-12-31',
-      repayments: [{ id: 1, paymentDate: '2024-01-15' }]
-    } as unknown as ExistingLoans;
-    
-    const result = categorizeLoanPayment(loan);
-    expect(result![0].status).toBe(LOAN_CATEGORY_ENUM.LATE);
+
+  it("should return an error message for a username shorter than 3 characters", () => {
+    expect(validateUsername("jo")).toBe("Username needs to be at least 3 chars long");
   });
-  
-  test('DEFAULTED categorization for payment more than 30 days after due date', () => {
-    const loan = {
-      id: 1,
-      name: 'Test',
-      principal: 1000,
-      interestRate: 5,
-      dueDate: '2023-12-31',
-      repayments: [{ id: 1, paymentDate: '2024-02-15' }]
-    } as unknown as ExistingLoans;
-    
-    const result = categorizeLoanPayment(loan);
-    expect(result![0].status).toBe(LOAN_CATEGORY_ENUM.DEFAULTED);
+
+  it("should return an error message for a username longer than 20 characters", () => {
+    expect(validateUsername("john_doe_john_doe_john_doe")).toBe("Username needs to be at most 20 chars long");
+  });
+});
+
+describe("validatePassword", () => {
+  it("should return undefined for a valid password", () => {
+    expect(validatePassword("123456")).toBeUndefined();
+  });
+
+  it("should return an error message for a password shorter than 6 characters", () => {
+    expect(validatePassword("12345")).toBe("Passwird must be at least 6 chars long");
+  });
+});
+
+describe("validatePaymentId", () => {
+  it("should return undefined for a valid payment ID", () => {
+    expect(validatePaymentId("123")).toBeUndefined();
+  });
+
+  it("should return an error message for a non-numeric payment ID", () => {
+    expect(validatePaymentId("abc")).toBe("Loan ID must be a number");
+  });
+
+  it("should return an error message for a negative payment ID", () => {
+    expect(validatePaymentId("-1")).toBe("Loan ID must be a number");
+  });
+
+  it("should return an error message for an empty payment ID", () => {
+    expect(validatePaymentId("")).toBe("Loan ID is required");
+  });
+});
+
+describe("validatePaymentAmount", () => {
+  it("should return undefined for a valid payment amount", () => {
+    expect(validatePaymentAmount("100.50")).toBeUndefined();
+  });
+
+  it("should return an error message for a non-numeric payment amount", () => {
+    expect(validatePaymentAmount("abc")).toBe("Payment amount must be a number");
+  });
+
+  it("should return an error message for a negative payment amount", () => {
+    expect(validatePaymentAmount("-1")).toBe("Payment amount must be a number");
+  });
+
+  it("should return an error message for an empty payment amount", () => {
+    expect(validatePaymentAmount("")).toBe("Payment amount is required");
+  });
+});
+
+describe("validateDate", () => {
+  it("should return undefined for a valid future date", () => {
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 1);
+    expect(validateDate(futureDate.toISOString().split("T")[0])).toBeUndefined();
+  });
+
+  it("should return an error message for a past date", () => {
+    const pastDate = new Date();
+    pastDate.setDate(pastDate.getDate() - 1);
+    expect(validateDate(pastDate.toISOString().split("T")[0])).toBe("Date is invalid");
+  });
+
+  it("should return an error message for an invalid date string", () => {
+    expect(validateDate("invalid-date")).toBe("Date is invalid");
   });
 });

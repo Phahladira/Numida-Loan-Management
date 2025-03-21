@@ -2,6 +2,7 @@ import React from "react";
 
 type ButtonProps = {
   isPrimary: boolean;
+  isSecondary?: boolean;
   disabled: boolean;
   content: string;
   isFlex?: boolean;
@@ -15,13 +16,20 @@ export const Button: React.FC<ButtonProps> = ({
   disabled = false,
   content = "Submit",
   isFlex = false,
+  isSecondary = false,
   onSubmit,
 }) => {
   return (
     <button
       type={type}
       className={`${
-        disabled ? "disabled-btn" : isPrimary ? "primary-btn" : "outline-btn"
+        disabled
+          ? "disabled-btn"
+          : isPrimary
+          ? "primary-btn"
+          : isSecondary
+          ? "secondary-btn"
+          : "outline-btn"
       } ${isFlex && "flex"}`}
       onClick={onSubmit}>
       {content}
